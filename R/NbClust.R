@@ -1,14 +1,23 @@
-NbClust <-function(data = NULL, diss=NULL, distance ="euclidean", min.nc=2, max.nc=15, method =NULL, index = "all", alphaBeale = 0.1)
+NbClust <-function(data = NULL, 
+                   diss = NULL, 
+                   distance = "euclidean", 
+                   min.nc = 2, 
+                   max.nc = 15, 
+                   method = NULL, 
+                   index = "all", 
+                   alphaBeale = 0.1)
 {
     
-    x<-0
+    x <- 0
     min_nc <- min.nc
     max_nc <- max.nc
     
     if(is.null(method))    
       stop("method is NULL")
+    
     method <- pmatch(method, c("ward.D2", "single", "complete", "average", 
-                               "mcquitty", "median", "centroid", "kmeans","ward.D"))
+                               "mcquitty", "median", "centroid", 
+                               "kmeans","ward.D"))
     
         
     indice <- pmatch(index, c("kl","ch","hartigan","ccc","scott","marriot","trcovw","tracew","friedman",
@@ -21,14 +30,17 @@ NbClust <-function(data = NULL, diss=NULL, distance ="euclidean", min.nc=2, max.
     if (indice == -1)
       stop("ambiguous index")
     
-    if ((indice == 3)|| (indice == 5)|| (indice == 6)|| (indice == 7)|| (indice == 8)|| (indice == 9)|| (indice == 10)|| (indice == 11)|| (indice == 18)|| (indice == 27)|| (indice == 29)|| (indice == 31)|| (indice == 32))
+    if ((indice == 3) || (indice == 5) || (indice == 6) || 
+        (indice == 7) || (indice == 8) || (indice == 9) || 
+        (indice == 10)|| (indice == 11)|| (indice == 18)|| 
+        (indice == 27)|| (indice == 29)|| (indice == 31)|| 
+        (indice == 32))
     { 
       if((max.nc-min.nc)<2)
         stop("The difference between the minimum and the maximum number of clusters must be at least equal to 2")
     }
     
-    
-    
+
     if(is.null(data))
     {
        
@@ -2361,7 +2373,9 @@ Indice.Gap <- function (x, clall, reference.distribution = "unif", B = 10,
         ||(indice==17)||(indice==18)||(indice==19)||(indice==21)||(indice==22)||(indice==23)||(indice==24)
         ||(indice==25)||(indice==26)||(indice==28)||(indice==30))  
          
-      results.final <- list(All.index=res,Best.nc=resultats, Best.partition=partition)
+      results.final <- list(All.index = res,
+                            Best.nc = resultats, 
+                            Best.partition = partition)
     
        
       
