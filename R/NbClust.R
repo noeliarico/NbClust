@@ -1,4 +1,4 @@
-NbClust <-function(data = NULL, 
+NbClust <-function(data = NULL, # matrix or dataset
                    diss = NULL, 
                    distance = "euclidean", 
                    min.nc = 2, 
@@ -20,10 +20,38 @@ NbClust <-function(data = NULL,
                                "kmeans","ward.D"))
     
         
-    indice <- pmatch(index, c("kl","ch","hartigan","ccc","scott","marriot","trcovw","tracew","friedman",
-                              "rubin","cindex","db","silhouette","duda","pseudot2","beale","ratkowsky","ball",
-                              "ptbiserial","gap", "frey", "mcclain",  "gamma", "gplus", "tau", "dunn", 
-                              "hubert", "sdindex", "dindex", "sdbw", "all","alllong"))
+    indice <- pmatch(index, c("kl", # -------------------------------------- 1
+                              "ch", # -------------------------------------- 2
+                              "hartigan", # -------------------------------- 3
+                              "ccc", # ------------------------------------- 4
+                              "scott", # ----------------------------------- 5
+                              "marriot", # --------------------------------- 6
+                              "trcovw", # ---------------------------------- 7
+                              "tracew", # ---------------------------------- 8
+                              "friedman", # -------------------------------- 9
+                              "rubin", # ----------------------------------- 10
+                              "cindex", # ---------------------------------- 11
+                              "db", # -------------------------------------- 12
+                              "silhouette", # ------------------------------ 13
+                              "duda", # ------------------------------------ 14
+                              "pseudot2", # -------------------------------- 15
+                              "beale", # ----------------------------------- 16
+                              "ratkowsky", # ------------------------------- 17
+                              "ball", # ------------------------------------ 18
+                              "ptbiserial", # ------------------------------ 19
+                              "gap", # ------------------------------------- 20
+                              "frey", # ------------------------------------ 21
+                              "mcclain", # --------------------------------- 22
+                              "gamma", # ----------------------------------- 23
+                              "gplus", # ----------------------------------- 24
+                              "tau", # ------------------------------------- 25
+                              "dunn", # ------------------------------------ 26
+                              "hubert", # ---------------------------------- 27
+                              "sdindex", # --------------------------------- 28
+                              "dindex", # ---------------------------------- 29
+                              "sdbw", # ------------------------------------ 30
+                              "all", # ------------------------------------- 31
+                              "alllong")) # -------------------------------- 32
     if (is.na(indice))
       stop("invalid clustering index")
     
@@ -166,7 +194,11 @@ if(!is.null(diss))
     #                                                                                                                      #
     #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
   
-   
+    # Creates a matrix to store the results with:
+    # max_nc-min_nc+1 rows to store the value of each possible k
+    # 30 columns to store the value of each index
+    # The cell ij contains the value of the clustering with k=i for the 
+    # index measure j
     res <- array(0, c(max_nc-min_nc+1,30))
     x_axis <- min_nc:max_nc
     resCritical <- array(0, c(max_nc-min_nc+1,4))
@@ -2277,6 +2309,7 @@ Indice.Gap <- function (x, clall, reference.distribution = "unif", B = 10,
   resultats <- resultats[,c(indice4)] 
  }
  
+
     
   resultats<-round(resultats, digits=4)
   res<-round(res, digits=4)
@@ -2297,8 +2330,13 @@ Indice.Gap <- function (x, clall, reference.distribution = "unif", B = 10,
     ######################## Summary results #####################################
     
     
-    if(any(indice == 31) || (indice == 32))
+    if(any(indice == 31) || (indice == 32)) # all or allalong
     {
+      # resultats tiene dos filas, la primera es el número de clusters (mejor) y
+      # la segunda es el valor del índice
+      cat("NOELIA**************************************************************", "\n")
+      cat("* resultats: \n")
+      print(resultats)
       cat("*******************************************************************", "\n")
       cat("* Among all indices:                                               ", "\n")
       BestCluster<-results1[1,]
