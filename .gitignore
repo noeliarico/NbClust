@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+paper/article.html
+.DS_Store
+paper/article.Rmd
+paper/index.bib
