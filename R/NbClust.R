@@ -8,6 +8,39 @@ NbClust <-function(data = NULL, # matrix or dataset
                    alphaBeale = 0.1)
 {
     
+  maximum <- c("kl",
+               "ch",
+               "ccc",
+               "silhouette", 
+               "ratkowsky",
+               "ptbiserial",
+               "gamma",
+               "tau",
+               "dunn")
+  
+  minimum <- c("cindex",
+               "db",
+               "mcclain",
+               "gplus",
+               "sdindex")
+  
+  weird <- c("hartigan", # Maximum difference between hierarchy levels of the index
+             "scott", # Maximum difference between hierarchy levels of the index
+             "marriot", # Max. value of second differences between levels of the index
+             "trcovw", # Maximum difference between hierarchy levels of the index
+             "tracew", # Maximum value of absolute second differences between levels of the index 
+             "friedman", # Maximum difference between hierarchy levels of the index
+             "rubin", # Minimum value of second differences between levels of the index
+             "duda", # Smallest nc such that index > criticalValue
+             "pseudot2", # Smallest nc such that index < criticalValue) 
+             "beale", # nc such that critical value of the index >= alpha
+             "ball", # Maximum difference between hierarchy levels of the index
+             "gap", # "Smallest nc such that criticalValue >= 0"
+             "frey", # the cluster level before that index value < 1.00
+             "hubert", # Graphical method
+             "dindex", # Graphical method
+             "sdbw" # Minimum value of the index
+             )
     x <- 0
     min_nc <- min.nc
     max_nc <- max.nc
