@@ -8,39 +8,6 @@ NbClust <-function(data = NULL, # matrix or dataset
                    alphaBeale = 0.1)
 {
     
-  maximum <- c("kl",
-               "ch",
-               "ccc",
-               "silhouette", 
-               "ratkowsky",
-               "ptbiserial",
-               "gamma",
-               "tau",
-               "dunn")
-  
-  minimum <- c("cindex",
-               "db",
-               "mcclain",
-               "gplus",
-               "sdindex")
-  
-  weird <- c("hartigan", # Maximum difference between hierarchy levels of the index
-             "scott", # Maximum difference between hierarchy levels of the index
-             "marriot", # Max. value of second differences between levels of the index
-             "trcovw", # Maximum difference between hierarchy levels of the index
-             "tracew", # Maximum value of absolute second differences between levels of the index 
-             "friedman", # Maximum difference between hierarchy levels of the index
-             "rubin", # Minimum value of second differences between levels of the index
-             "duda", # Smallest nc such that index > criticalValue
-             "pseudot2", # Smallest nc such that index < criticalValue) 
-             "beale", # nc such that critical value of the index >= alpha
-             "ball", # Maximum difference between hierarchy levels of the index
-             "gap", # "Smallest nc such that criticalValue >= 0"
-             "frey", # the cluster level before that index value < 1.00
-             "hubert", # Graphical method
-             "dindex", # Graphical method
-             "sdbw" # Minimum value of the index
-             )
     x <- 0
     min_nc <- min.nc
     max_nc <- max.nc
@@ -2365,12 +2332,12 @@ Indice.Gap <- function (x, clall, reference.distribution = "unif", B = 10,
     
     if(any(indice == 31) || (indice == 32)) # all or allalong
     {
-      # resultats tiene dos filas, la primera es el número de clusters (mejor) y
-      # la segunda es el valor del índice
-      cat("NOELIA**************************************************************", "\n")
-      cat("* resultats: \n")
-      print(resultats)
-      cat("*******************************************************************", "\n")
+      # resultats tiene dos filas, la primera es el numero de clusters (mejor) y
+      # la segunda es el valor del indice
+      # cat("NOELIA**************************************************************", "\n")
+      # cat("* resultats: \n")
+      # print(resultats)
+      # cat("*******************************************************************", "\n")
       cat("* Among all indices:                                               ", "\n")
       BestCluster<-results1[1,]
       c=0
@@ -2429,7 +2396,12 @@ Indice.Gap <- function (x, clall, reference.distribution = "unif", B = 10,
     
     #########################  Summary results   ############################
     
-    
+    # At this points, res contains a matrix where each row is a value of k
+    # and each column one of the indices. This is stored in the final output
+    # in the variable All.index
+  
+    res2 <- t(res)
+    print(res2)
     
     if ((indice == 14)|| (indice == 15)|| (indice == 16)|| (indice == 20)|| (indice == 31)|| (indice == 32))
     { 
@@ -2453,4 +2425,60 @@ Indice.Gap <- function (x, clall, reference.distribution = "unif", B = 10,
     return(results.final)
     
    
+}
+
+#' Takes a matrix where the columns represent a value $k$ for the number of 
+#' clusters and each of the rows is a voter, this is, a index giving its values
+#' for each number of cluster.
+#' 
+#' A ranking is created for each index depending on how they would be sorted
+#'
+#' @param res A matrix witht the results of each index for each partition
+#'
+#' @return A profile of rankings where the voters are the indexes and the 
+#' candidates the number of clusters
+#' @export
+#'
+#' @examples
+results_to_rankings <- function(res) {
+  res <- t(res)
+  maximum <- c("kl",
+               "ch",
+               "ccc",
+               "silhouette", 
+               "ratkowsky",
+               "ptbiserial",
+               "gamma",
+               "tau",
+               "dunn")
+  
+  minimum <- c("cindex",
+               "db",
+               "mcclain",
+               "gplus",
+               "sdindex")
+  
+  weird <- c("hartigan", # Maximum difference between hierarchy levels of the index
+             "scott", # Maximum difference between hierarchy levels of the index
+             "marriot", # Max. value of second differences between levels of the index
+             "trcovw", # Maximum difference between hierarchy levels of the index
+             "tracew", # Maximum value of absolute second differences between levels of the index 
+             "friedman", # Maximum difference between hierarchy levels of the index
+             "rubin", # Minimum value of second differences between levels of the index
+             "duda", # Smallest nc such that index > criticalValue
+             "pseudot2", # Smallest nc such that index < criticalValue) 
+             "beale", # nc such that critical value of the index >= alpha
+             "ball", # Maximum difference between hierarchy levels of the index
+             "gap", # "Smallest nc such that criticalValue >= 0"
+             "frey", # the cluster level before that index value < 1.00
+             "hubert", # Graphical method
+             "dindex", # Graphical method
+             "sdbw" # Minimum value of the index
+  )
+  
+  print(class(res))
+  print(ncol(res))
+  for(row in seq(nrow(res))) {
+    print(res[row,])
+  }
 }
