@@ -1,3 +1,18 @@
+#' Title
+#'
+#' @param data 
+#' @param diss 
+#' @param distance 
+#' @param min.nc 
+#' @param max.nc 
+#' @param method 
+#' @param index 
+#' @param alphaBeale 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 NbClust <-function(data = NULL, # matrix or dataset
                    diss = NULL, 
                    distance = "euclidean", 
@@ -2456,7 +2471,8 @@ results_to_rankings <- function(res) {
                "db",
                "mcclain",
                "gplus",
-               "sdindex")
+               "sdindex",
+               "sdbw")
   
   weird <- c("hartigan", # Maximum difference between hierarchy levels of the index
              "scott", # Maximum difference between hierarchy levels of the index
@@ -2472,8 +2488,7 @@ results_to_rankings <- function(res) {
              "gap", # "Smallest nc such that criticalValue >= 0"
              "frey", # the cluster level before that index value < 1.00
              "hubert", # Graphical method
-             "dindex", # Graphical method
-             "sdbw" # Minimum value of the index
+             "dindex" # Graphical method
   )
   
   print(class(res))
