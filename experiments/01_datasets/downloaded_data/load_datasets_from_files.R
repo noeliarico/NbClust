@@ -6,17 +6,17 @@ library(tidyverse)
 # Synthetic 2-d data with N = 5000 vectors and k = 15 
 # Gaussian clusters with different degree of cluster overlap
 
-# @article{Ssets,
-#   author  = {P. Fr\"anti and O. Virmajoki},
-#     title   = {Iterative shrinking method for clustering problems},
-#     journal = {Pattern Recognition},
-#     year    = {2006},
-#     volume  = {39},
-#     number  = {5},
-#     pages   = {761--765},
-#     doi     = {10.1016/j.patcog.2005.09.012},
-#     url     = {http://dx.doi.org/10.1016/j.patcog.2005.09.012}
-# }
+#' @article{Ssets,
+#'   author  = {P. Fr\"anti and O. Virmajoki},
+#'     title   = {Iterative shrinking method for clustering problems},
+#'     journal = {Pattern Recognition},
+#'     year    = {2006},
+#'     volume  = {39},
+#'     number  = {5},
+#'     pages   = {761--765},
+#'     doi     = {10.1016/j.patcog.2005.09.012},
+#'     url     = {http://dx.doi.org/10.1016/j.patcog.2005.09.012}
+#' }
 
 data_s1 <- read.table("experiments/01_datasets/downloaded_data/files/s1.txt")
 data_s2 <- read.table("experiments/01_datasets/downloaded_data/files/s2.txt")
@@ -44,14 +44,14 @@ save(data_s4, data_s4c, file = "experiments/01_datasets/downloaded_data/objects/
 # Synthetic 2-d data with increasing number of clusters (k). 
 # There are 150 vectors per cluster.
 
-# @TECHREPORT{Asets,
-#   author = {I. K\"arkk\"ainen and P. Fr\"anti},
-#   title = {Dynamic local search algorithm for the clustering problem},
-#   institution = {Department of Computer Science, University of Joensuu},
-#   address = {Joensuu, Finland},
-#   number = {A-2002-6},
-#   year = {2002}
-# }
+#' @TECHREPORT{Asets,
+#'   author = {I. K\"arkk\"ainen and P. Fr\"anti},
+#'   title = {Dynamic local search algorithm for the clustering problem},
+#'   institution = {Department of Computer Science, University of Joensuu},
+#'   address = {Joensuu, Finland},
+#'   number = {A-2002-6},
+#'   year = {2002}
+#' }
 
 data_a1 <- read.table("experiments/01_datasets/downloaded_data/files/a1.txt")
 data_a2 <- read.table("experiments/01_datasets/downloaded_data/files/a2.txt")
@@ -135,3 +135,34 @@ datasets <- c("data_s1",
 #                      col_types = cols(real_cluster = col_factor()))) %>%
 #   mutate(real_cluster = factor(real_cluster, levels = 1:8))
 # save(unbalance, unbalancec, file = "experiments/01_datasets/downloaded_data/objects/unbalance.RData")
+
+
+# Shape datasets ----------------------------------------------------------
+
+data_shape_aggregationc <- read.table("experiments/01_datasets/downloaded_data/files/shape_Aggregation.txt") %>%
+  rename(real_cluster = V3) %>% mutate(real_cluster = as.factor(real_cluster))
+data_shape_aggregation <- data_shape_aggregationc[,-3]
+
+data_shape_compoundc <- read.table("experiments/01_datasets/downloaded_data/files/shape_Compound.txt") %>%
+  rename(real_cluster = V3) %>% mutate(real_cluster = as.factor(real_cluster))
+data_shape_compound <- data_shape_compoundc[,-3]
+
+data_shape_flamec <- read.table("experiments/01_datasets/downloaded_data/files/shape_flame.txt") %>%
+  rename(real_cluster = V3) %>% mutate(real_cluster = as.factor(real_cluster))
+data_shape_flame <- data_shape_flamec[,-3]
+
+data_shape_jainc <- read.table("experiments/01_datasets/downloaded_data/files/shape_jain.txt") %>%
+  rename(real_cluster = V3) %>% mutate(real_cluster = as.factor(real_cluster))
+data_shape_jain <- data_shape_jainc[,-3]
+
+data_shape_pathbasedc <- read.table("experiments/01_datasets/downloaded_data/files/shape_pathbased.txt") %>%
+  rename(real_cluster = V3) %>% mutate(real_cluster = as.factor(real_cluster))
+data_shape_pathbased <- data_shape_pathbasedc[,-3]
+
+data_shape_R15c <- read.table("experiments/01_datasets/downloaded_data/files/shape_R15.txt") %>%
+  rename(real_cluster = V3) %>% mutate(real_cluster = as.factor(real_cluster))
+data_shape_R15 <- data_shape_R15c[,-3]
+
+data_shape_spiralc <- read.table("experiments/01_datasets/downloaded_data/files/shape_spiral.txt") %>%
+  rename(real_cluster = V3) %>% mutate(real_cluster = as.factor(real_cluster))
+data_shape_spiral <- data_shape_spiralc[,-3]
