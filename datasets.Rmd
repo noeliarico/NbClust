@@ -1,0 +1,318 @@
+---
+title: Short Paper
+author:
+  - name: Noelia Rico
+    email: noeliarico@uniovi.es
+    affiliation: Department of Computer Science, University of Oviedo
+    footnote: 1
+  - name: Raúl Pérez-Fernández
+    email: perezfernandez@uniovi.es
+    affiliation: Another University
+  - name: Irene Díaz
+    email: sirene@uniovi.es
+    affiliation: Department of Computer Science, University of Oviedo
+    footnote: 2
+address:
+  - code: Some Institute of Technology
+    address: Department, Street, City, State, Zip
+  - code: Another University
+    address: Department, Street, City, State, Zip
+footnote:
+  - code: 1
+    text: "Corresponding Author"
+  - code: 2
+    text: "Equal contribution"
+abstract: |
+  This is the abstract.
+
+  It consists of two paragraphs.
+
+journal: "An awesome journal"
+date: "`r Sys.Date()`"
+bibliography: mybibfile.bib
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{mathrsfs}
+  - \newtheorem{example}{Example}[section]
+  - \newcommand{\Rpackage}[1]{\texttt{#1}}
+  - \newcommand{\noelia}[1]{\textcolor{purple}{#1}}
+#linenumbers: true
+#numbersections: true
+csl: elsevier-harvard.csl
+output: 
+  rticles::elsevier_article:
+    number_sections: yes
+
+---
+
+
+
+<!--
+_Text based on elsarticle sample manuscript, see [http://www.elsevier.com/author-schemas/latex-instructions#elsarticle](http://www.elsevier.com/author-schemas/latex-instructions#elsarticle)_
+
+Front matter
+============
+
+The author names and affiliations could be formatted in two ways:
+
+(1) Group the authors per affiliation.
+
+(2) Use footnotes to indicate the affiliations.
+
+See the front matter of this document for examples. You are recommended
+to conform your choice to the journal you are submitting to.
+
+Bibliography styles
+===================
+
+There are various bibliography styles available. You can select the
+style of your choice in the preamble of this document. These styles are
+Elsevier styles based on standard styles like Harvard and Vancouver.
+Please use BibTeX to generate your bibliography and include DOIs
+whenever available.
+
+Here are two sample references: @Feynman1963118 [@Dirac1953888].
+
+References {#references .unnumbered}
+==========
+
+-->
+
+```{r include=FALSE}
+library(gridExtra)
+library(tidyverse)
+library(xtable)
+load("../all.RData")
+source("../experiments/00_global_variables.R")
+```
+
+As it is difficult to evaluate clustering methods considering the usual lack if a real grouping in the original dataset, @data_clustering propose a set of clustering benchmark dataset which are commonly used in the literature for testing new methods. These dataset are divided into different subcategories regarding the characteristics of the dataset.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+info <- function(x) { 
+  name <- x
+  x <- get(x) 
+  tribble(~name, ~clusters, ~variables, ~observations, 
+           name,  length(unique(x$real_cluster)), ncol(x)-1, nrow(x))
+}
+print(sapply(paste0(datasets, "c"), info) %>% t() %>% as_tibble() %>%
+  mutate(name = str_remove(name, "data_")) %>% 
+  xtable(digits = 0), include.rownames = FALSE)
+```
+
+# Datasets
+
+In order to test the evaluation of the proposed method described in Section \ref{sec:evaluation}, different datasets have been used. These datasets are both real and synthetic datasets with different characteristics.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+info <- function(x) { 
+  name <- x
+  x <- get(x) 
+  tribble(~name, ~clusters, ~variables, ~observations, 
+           name,  length(unique(x$real_cluster)), ncol(x)-1, nrow(x))
+}
+print(sapply(paste0(datasets, "c"), info) %>% t() %>% as_tibble() %>%
+  mutate(name = str_remove(name, "data_")) %>% 
+  xtable(digits = 0), include.rownames = FALSE)
+```
+
+
+Clustering @data_clustering
+
+
+## A datasets
+
+The A datasets [@data_Asets] are three datasets of systhentic two-dimensional data with different number of circular cluster and 150 objects per cluster in the dataset. The number of clusters of each dataset $\textrm{A}_1$, $\textrm{A}_2$ and $\textrm{A}_3$ is 20, 35 and 50 repectevely (and thus the number of instances varies from 3000 to 7500 following the 150 objects per cluster).
+
+
+```{r echo=FALSE, fig.height=2, fig.fullwidth=TRUE}
+p_a1<- ggplot(data_a1c, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none")
+
+p_a2<- ggplot(data_a2c, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none")
+
+p_a3<- ggplot(data_a3c, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none")
+
+grid.arrange(
+  p_a1,
+  p_a2,
+  p_a3,
+  nrow = 1
+)
+```
+
+## S datasets
+
+The S datasets [@data_Ssets] are the group of two-dimensional datasets with 5000 objects and 15 gaussian clusters (150 objects per cluster in each dataset) formed by $\textrm{S}_1$, $\textrm{S}_2$, $\textrm{S}_3$ and $\textrm{S}_4$. The different between them is that the gaussian clusters in each of the datasets have a different degree of cluster overlap.
+
+```{r echo=FALSE, fig.height=2}
+p_s1<- ggplot(data_s1c, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none")
+
+p_s2<- ggplot(data_s2c, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none")
+
+p_s3<- ggplot(data_s3c, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none")
+
+grid.arrange(
+  p_s1,
+  p_s2,
+  p_s3,
+  nrow = 1
+)
+```
+
+## Birch datasets
+
+Birch 1:
+
+The centroid locations were first optimized  by genetic algorihm (GA) 
+[Fränti, Pat.Rec.Lett.2000]. The centroids form a 10x10 grid. Their
+average distance was calculated as 92247. A grid using this parameter
+was then manually fit for the data, and the result locations recorded 
+as the ground truth centroids. Ground truth partition lables were
+obtained by mapping each point to its nearest centroid.
+
+
+Birch 2:
+
+Centroid locations were first optimized by GA, and their average 
+distance in x-axis was calculated as 9512 from the result. 
+The centroids form a sine curve function:
+
+  y(x) = amplitude * sin(2*pi*frequency*x + phaseshift) + offset
+
+It was manually fit using parameters:
+
+  Offset      =  43659
+  Amplitude   =  -37819
+  Phaseshift  =  20.8388
+  Frequency   =  0.000004205
+
+Ground truth centroids were then plotted in this curve and the
+corresponding x and y(x) were recorded as the groung truth centroids.
+Ground truth partitions were obtained by mapping each point to its
+nearest centroid.
+
+
+Birch 3:
+
+Centroid locations were first optimized by GA, from which they were
+manually tuned and their locations recorded as the ground truth.
+Due to the overlap, ground truth partitions were not calculated.
+
+## G2 datasets
+
+## Dim-sets
+
+High-dimensional data sets N=1024 and k=16 Gaussian clusters.
+Clusters are well separated even in the higher dimensional cases. 
+
+(high)
+
+		Synthetic data with Gaussian clusters.
+N=1351-10126 vectors in k=9 clusters in 2-15 dimensional space
+
+(low)
+
+# Unbalance
+
+Synthetic 2-d data with N=6500 vectors and k=8 Gaussian clusters
+
+## Shaped datasets
+
+Data aggregation
+@data_aggregation
+
+Data compound
+@data_compound
+
+Data pathbased
+@data_pathbased_spiral
+
+Data spiral
+@data_d31_r15
+
+Data jain
+@data_jain
+
+Data flame
+@data_flame
+
+
+```{r echo=FALSE, fig.height=4}
+p_aggregation <- ggplot(data_shape_aggregationc, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none")
+
+p_compound <- ggplot(data_shape_compoundc, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none") 
+
+p_flame <- ggplot(data_shape_flamec, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none") 
+
+p_jain <- ggplot(data_shape_jainc, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none") 
+
+p_pathbased <- ggplot(data_shape_pathbasedc, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none") 
+
+p_R15 <- ggplot(data_shape_R15c, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none") 
+
+p_spiral <- ggplot(data_shape_spiralc, aes(V1, V2, color = real_cluster)) +
+  geom_point(alpha = 0.2) + 
+  theme(legend.position = "none") 
+
+grid.arrange(
+  p_aggregation,
+  p_compound,
+  p_flame,
+  p_jain,
+  p_pathbased,
+  p_R15,
+  p_spiral,
+  nrow = 2
+)
+```
+
+# UCI datasets
+
+- **Thyroid**: Thyroid disease records having 3772 of 30 attributes where 7 cont nad 23 discrete and two different clusters. Yo creo que este mejor quitarlo
+- In [@data_wine] the authors perform an anylysis of the chimical composition of the wines grown in a concrete region of Italy by different wineries using the now broadly-used **wine** dataset. This dataset contains 13 attributes defining the properties of and 178 objects that divided the wines into three different clusters belonging 59, 71 and 48 wines to each clusters.
+- **Yeast**
+- **Breast**
+- The **iris** dataset contains 150 objects divided in three different clusters. Each clusters represent a different type of iris flower (Setosa, Versicolor and Virginica) and there are exactly 50 observations of each type of flower. Each flower is define by four attributes that represent the length and width of the sepal and the petal of the flower. The Setoca class is strongly separable from the other classes although the versiculor and virginica are not linearly separable between them.
+- The **glass** dataset was The study of classification of types of glass was motivated by criminological investigation since the glass found at the crime scenes were a pontetian evidence if correctly identified. Ir consist of 214 objects in difined by 9 attributes. The dataset is divided into 6 different clusters of sizes 70, 17, 73, 13, 9 and 29. 
+- **Wdbc**
+- **Leaves**
+- **Letter**
+- The **spam** dataset divided 4601 emails defined by 57 attributes into two different clusters whether they 
+
+
+# Eval
+
+The performance of the proposed method of k selection as well as the performance of other xX indexes and the original NbClust approach is compared. . The results are explained through the stadistical indicators: frequency, mean and standard deviation of the optimal k.
+
+
+Para 
+
+We give the name \textit{\textbf{evaluation}} to the matrix resulting of evaluating the method $m$ applied in the dataset $d$ using all the possible values of $k$ and evaluated with all the possible indexes $i$. Figure xX represented. 
+
+A total of $n_e$ evaluations have been performed for each dataset obtained a total of $E = \{e_1, \dots, e_{n_e} \}$ as the shown in figure xX. 
+
+For each E the times that the optimum number of clusters is obtained is counted

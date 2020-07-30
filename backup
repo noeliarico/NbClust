@@ -1,0 +1,27 @@
+
+
+
+
+
+
+
+
+
+# Results {#sec:results}
+
+The performance of the proposed method of $k$ selection as well as the performance of other \noelia{xX} indices and the original \Rpackage{NbClust} approach are compared.
+-->
+
+<!--
+The results are explained through the stadistical indicators: frequency, mean and standard deviation of the optimal k.
+-->
+
+<!--
+The experiments are conducted in a \noelia{... características del ordenador ...} and the programming language used was R with the development environment RStudio. All the code is available in the public Github repository \texttt{noeliarico/NbClust}. 
+
+# Conclusions and future work {#results}
+
+In this work, we have compared the performance of \noelia{xX} different clustering indices. Furthermore, we have proposed a new method to seek for the best number of clusters to divide a dataset.
+
+# References
+-->

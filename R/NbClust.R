@@ -14,6 +14,7 @@
 #'
 #' @examples
 NbClust <-function(data = NULL, # matrix or dataset
+                   # matrix of distances between the objects of the dataset
                    diss = NULL, 
                    distance = "euclidean", 
                    min.nc = 2, 
@@ -23,125 +24,131 @@ NbClust <-function(data = NULL, # matrix or dataset
                    alphaBeale = 0.1)
 {
     
-    x <- 0
-    min_nc <- min.nc
-    max_nc <- max.nc
+  # The clustering method given as argument is executed a total of 
+  # min_nc - max_nc times and the best nc according to most of the indexes is  
+  # selected as best partition
+  x <- 0
+  min_nc <- min.nc
+  max_nc <- max.nc
     
-    if(is.null(method))    
-      stop("method is NULL")
+  if(is.null(method))    
+    stop("method is NULL")
     
-    method <- pmatch(method, c("ward.D2", "single", "complete", "average", 
-                               "mcquitty", "median", "centroid", 
-                               "kmeans","ward.D"))
+  # Valid clustering methods
+  method <- pmatch(method, c("ward.D2", "single", "complete", "average", 
+                             "mcquitty", "median", "centroid", 
+                             "kmeans","ward.D"))
     
         
-    indice <- pmatch(index, c("kl", # -------------------------------------- 1
-                              "ch", # -------------------------------------- 2
-                              "hartigan", # -------------------------------- 3
-                              "ccc", # ------------------------------------- 4
-                              "scott", # ----------------------------------- 5
-                              "marriot", # --------------------------------- 6
-                              "trcovw", # ---------------------------------- 7
-                              "tracew", # ---------------------------------- 8
-                              "friedman", # -------------------------------- 9
-                              "rubin", # ----------------------------------- 10
-                              "cindex", # ---------------------------------- 11
-                              "db", # -------------------------------------- 12
-                              "silhouette", # ------------------------------ 13
-                              "duda", # ------------------------------------ 14
-                              "pseudot2", # -------------------------------- 15
-                              "beale", # ----------------------------------- 16
-                              "ratkowsky", # ------------------------------- 17
-                              "ball", # ------------------------------------ 18
-                              "ptbiserial", # ------------------------------ 19
-                              "gap", # ------------------------------------- 20
-                              "frey", # ------------------------------------ 21
-                              "mcclain", # --------------------------------- 22
-                              "gamma", # ----------------------------------- 23
-                              "gplus", # ----------------------------------- 24
-                              "tau", # ------------------------------------- 25
-                              "dunn", # ------------------------------------ 26
-                              "hubert", # ---------------------------------- 27
-                              "sdindex", # --------------------------------- 28
-                              "dindex", # ---------------------------------- 29
-                              "sdbw", # ------------------------------------ 30
-                              "all", # ------------------------------------- 31
-                              "alllong")) # -------------------------------- 32
-    if (is.na(indice))
-      stop("invalid clustering index")
-    
-    if (indice == -1)
-      stop("ambiguous index")
-    
-    if ((indice == 3) || (indice == 5) || (indice == 6) || 
-        (indice == 7) || (indice == 8) || (indice == 9) || 
-        (indice == 10)|| (indice == 11)|| (indice == 18)|| 
-        (indice == 27)|| (indice == 29)|| (indice == 31)|| 
-        (indice == 32))
-    { 
-      if((max.nc-min.nc)<2)
-        stop("The difference between the minimum and the maximum number of clusters must be at least equal to 2")
-    }
-    
-
-    if(is.null(data))
-    {
-       
-      if(method==8)
-      {
-        stop("\n","method = kmeans, data matrix is needed")
-      }
-      else
-      {  
-        if ((indice == 1 )|| (indice == 2)|| (indice == 3 )|| (indice == 4 )|| (indice == 5)|| (indice == 6)|| (indice == 7)|| (indice == 8)|| (indice == 9)|| (indice == 10)|| (indice == 12)|| (indice == 14)|| (indice == 15)|| (indice == 16)|| (indice == 17)|| (indice == 18)
-          || (indice == 19)|| (indice == 20)|| (indice == 23)|| (indice == 24)|| (indice == 25) || (indice == 27)|| (indice == 28)
-          || (indice == 29) || (indice == 30)|| (indice == 31) || (indice == 32))
-          stop("\n","Data matrix is needed. Only frey, mcclain, cindex, sihouette and dunn can be computed.", "\n")
-       
-        if(is.null(diss))
-          stop("data matrix and dissimilarity matrix are both null")
-        else  
-          cat("\n","Only frey, mcclain, cindex, sihouette and dunn can be computed. To compute the other indices, data matrix is needed","\n") 
-      }
-    }
-    
-    else
-    {
-      jeu1 <- as.matrix(data)
-      numberObsBefore <- dim(jeu1)[1]
-      jeu <- na.omit(jeu1) # returns the object with incomplete cases removed 
-      nn <- numberObsAfter <- dim(jeu)[1]
-      pp <- dim(jeu)[2]    
-      TT <- t(jeu)%*%jeu   
-      sizeEigenTT <- length(eigen(TT)$value)
-      eigenValues <- eigen(TT/(nn-1))$value
-      
-      # Only for indices using vv : CCC, Scott, marriot, tracecovw, tracew, friedman, rubin
-      
-      if (any(indice == 4) || (indice == 5) || (indice == 6) || (indice == 7) || (indice == 8) || (indice == 9) || (indice == 10) || (indice == 31) || (indice == 32))
-      {
-        for (i in 1:sizeEigenTT) 
-        {
-          if (eigenValues[i] < 0) {
-            #cat(paste("There are only", numberObsAfter,"nonmissing observations out of a possible", numberObsBefore ,"observations."))
-            stop("The TSS matrix is indefinite. There must be too many missing values. The index cannot be calculated.")
-          } 
-        }
-        s1 <- sqrt(eigenValues)
-        ss <- rep(1,sizeEigenTT)
-        for (i in 1:sizeEigenTT) 
-        {
-          if (s1[i]!=0) 
-            ss[i]=s1[i]
-        }
-        vv <- prod(ss)  
-      } 
-            
-    }
-    
-     
-    
+  indice <- pmatch(index, c("kl", # -------------------------------------- 1
+                            "ch", # -------------------------------------- 2
+                            "hartigan", # -------------------------------- 3
+                            "ccc", # ------------------------------------- 4
+                            "scott", # ----------------------------------- 5
+                            "marriot", # --------------------------------- 6
+                            "trcovw", # ---------------------------------- 7
+                            "tracew", # ---------------------------------- 8
+                            "friedman", # -------------------------------- 9
+                            "rubin", # ----------------------------------- 10
+                            "cindex", # ---------------------------------- 11
+                            "db", # -------------------------------------- 12
+                            "silhouette", # ------------------------------ 13
+                            "duda", # ------------------------------------ 14
+                            "pseudot2", # -------------------------------- 15
+                            "beale", # ----------------------------------- 16
+                            "ratkowsky", # ------------------------------- 17
+                            "ball", # ------------------------------------ 18
+                            "ptbiserial", # ------------------------------ 19
+                            "gap", # ------------------------------------- 20
+                            "frey", # ------------------------------------ 21
+                            "mcclain", # --------------------------------- 22
+                            "gamma", # ----------------------------------- 23
+                            "gplus", # ----------------------------------- 24
+                            "tau", # ------------------------------------- 25
+                            "dunn", # ------------------------------------ 26
+                            "hubert", # ---------------------------------- 27
+                            "sdindex", # --------------------------------- 28
+                            "dindex", # ---------------------------------- 29
+                            "sdbw", # ------------------------------------ 30
+                            "all", # ------------------------------------- 31
+                            "alllong")) # -------------------------------- 32
   
+  # It is necessary an index or list of indexes to evaluate the quality of the
+  # partitions created with the method for each nc
+  if (is.na(indice))
+    stop("invalid clustering index")
+    
+  if (indice == -1)
+    stop("ambiguous index")
+    
+  if ((indice == 3) || (indice == 5) || (indice == 6) || # hartigan, scott, marriot
+      (indice == 7) || (indice == 8) || (indice == 9) || # trcovw, tracew, friedman
+      (indice == 10)|| (indice == 11)|| (indice == 18)|| # rubin, cindex, ball
+      (indice == 27)|| (indice == 29)|| (indice == 31)|| # hubert, dindex, all
+      (indice == 32)) # allalong
+  { 
+    if ((max.nc - min.nc) < 2)
+      stop("The difference between the minimum and the maximum number of clusters must be at least equal to 2")
+  }
+    
+  # no data
+  if(is.null(data)) # data is not given as argument
+  {
+    # for kmeans it is necessary to give the information of the data, as the
+    # centroids of each cluster must be recalculated in each iteration using
+    # the objects in the clusters. For hierarchical methods the distance between
+    # each object in enogh to group them into clusters.
+    if(method == 8)
+    {
+      stop("\n","method = kmeans, data matrix is needed")
+    }
+    else
+    {  
+      if ((indice == 1 )|| (indice == 2)|| (indice == 3 )|| (indice == 4 )|| (indice == 5)|| (indice == 6)|| (indice == 7)|| (indice == 8)|| (indice == 9)|| (indice == 10)|| (indice == 12)|| (indice == 14)|| (indice == 15)|| (indice == 16)|| (indice == 17)|| (indice == 18)
+        || (indice == 19)|| (indice == 20)|| (indice == 23)|| (indice == 24)|| (indice == 25) || (indice == 27)|| (indice == 28)
+        || (indice == 29) || (indice == 30)|| (indice == 31) || (indice == 32))
+        stop("\n","Data matrix is needed. Only frey, mcclain, cindex, sihouette and dunn can be computed.", "\n")
+     
+      if(is.null(diss))
+        stop("data matrix and dissimilarity matrix are both null")
+      else  
+        cat("\n","Only frey, mcclain, cindex, sihouette and dunn can be computed. To compute the other indices, data matrix is needed","\n") 
+    }
+  }
+  
+  else # data is given as argument
+  {
+    jeu1 <- as.matrix(data)
+    numberObsBefore <- dim(jeu1)[1]
+    jeu <- na.omit(jeu1) # returns the object with incomplete cases removed 
+    nn <- numberObsAfter <- dim(jeu)[1]
+    pp <- dim(jeu)[2]    
+    TT <- t(jeu)%*%jeu   
+    sizeEigenTT <- length(eigen(TT)$value)
+    eigenValues <- eigen(TT/(nn-1))$value
+    
+    # Only for indices using vv : CCC, Scott, marriot, tracecovw, tracew, friedman, rubin
+    
+    if (any(indice == 4) || (indice == 5) || (indice == 6) || (indice == 7) || (indice == 8) || (indice == 9) || (indice == 10) || (indice == 31) || (indice == 32))
+    {
+      for (i in 1:sizeEigenTT) 
+      {
+        if (eigenValues[i] < 0) {
+          #cat(paste("There are only", numberObsAfter,"nonmissing observations out of a possible", numberObsBefore ,"observations."))
+          stop("The TSS matrix is indefinite. There must be too many missing values. The index cannot be calculated.")
+        } 
+      }
+      s1 <- sqrt(eigenValues)
+      ss <- rep(1,sizeEigenTT)
+      for (i in 1:sizeEigenTT) 
+      {
+        if (s1[i]!=0) 
+          ss[i]=s1[i]
+      }
+      vv <- prod(ss)  
+    } 
+          
+  }
       
   #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
   #                                                                                                                      #
@@ -149,57 +156,64 @@ NbClust <-function(data = NULL, # matrix or dataset
   #                                                                                                                      #
   #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
   
-if(is.null(distance))
-  distanceM<-7
-if(!is.null(distance))
-  distanceM <- pmatch(distance, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
+  # If this is TRUE it is because the user wrote distance = NULL in the call of
+  # the function. Otherwise the value of ditance is "euclidean" as default
+  if (is.null(distance)) 
+    distanceM <- 7
+  if (!is.null(distance))
+    distanceM <- pmatch(distance, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
   
-if (is.na(distanceM)) 
-{
-  stop("invalid distance")
-} 
+  if (is.na(distanceM)) # NULL distance of not in the list of possible values
+  {
+    stop("invalid distance")
+  } 
     
-if(is.null(diss))
-{  
-      
+  # If the matrix with the distances between the objects of the dataset is given
+  # then this is skipped even if a distance were given too. Otherwise, if there
+  # is no matrix of distances it is computed
+  if(is.null(diss))
+  {  
+    # "dist" function computes and returns the distance matrix computed 
+    # by using the specified distance measure to compute the distances 
+    # between the rows of a data matrix.
     if (distanceM == 1) 
     {
-    		md <- dist(jeu, method="euclidean")	# "dist" function computes and returns the distance matrix computed by using the specified distance measure to compute the distances between the rows of a data matrix.
-	  }
+    	md <- dist(jeu, method="euclidean")	
+  	}
     if (distanceM == 2) 
-      {
-    		md <- dist(jeu, method="maximum")	
-	    }
+    {
+    	md <- dist(jeu, method="maximum")	
+  	}
     if (distanceM == 3) 
-      {
-    		md <- dist(jeu, method="manhattan")	
-	    }
+    {
+      md <- dist(jeu, method="manhattan")	
+  	}
     if (distanceM == 4) 
-      {
-    		md <- dist(jeu, method="canberra")	
-	    }
+    {
+    	md <- dist(jeu, method="canberra")	
+  	}
     if (distanceM == 5) 
-      {
-    		md <- dist(jeu, method="binary")	
-	    }
+    {
+    	md <- dist(jeu, method="binary")	
+  	}
     if (distanceM == 6) 
-     {
-    		md <- dist(jeu, method="minkowski")	
-	   }
-
-   if (distanceM == 7) 
+    {
+  		md <- dist(jeu, method="minkowski")	
+  	}
+    if (distanceM == 7) 
     {		  
      stop("dissimilarity matrix and distance are both NULL")		
     } 
-}
+  }
 
-if(!is.null(diss))
-{
-  if((distanceM==1)||(distanceM==2)|| (distanceM==3)|| (distanceM==4)|| (distanceM==5)|| (distanceM==6))
-    stop("dissimilarity matrix and distance are both not null")
-  else
-    md <- diss
-}
+  if(!is.null(diss)) # this should be an else and checked before.......
+  {
+    if ((distanceM==1) || (distanceM==2) || (distanceM==3) || 
+        (distanceM==4) || (distanceM==5) || (distanceM==6))
+      stop("dissimilarity matrix and distance are both not null")
+    else
+      md <- diss
+  }
    
 
   
@@ -209,20 +223,23 @@ if(!is.null(diss))
     #                                                                                                                      #
     #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
   
-    # Creates a matrix to store the results with:
-    # max_nc-min_nc+1 rows to store the value of each possible k
-    # 30 columns to store the value of each index
-    # The cell ij contains the value of the clustering with k=i for the 
-    # index measure j
-    res <- array(0, c(max_nc-min_nc+1,30))
-    x_axis <- min_nc:max_nc
-    resCritical <- array(0, c(max_nc-min_nc+1,4))
-    rownames(resCritical) <- min_nc:max_nc
-    colnames(resCritical) <- c("CritValue_Duda", "CritValue_PseudoT2", "Fvalue_Beale", "CritValue_Gap")
-    rownames(res) <- min_nc:max_nc
-    colnames(res) <- c("KL","CH","Hartigan","CCC","Scott","Marriot", "TrCovW", "TraceW","Friedman","Rubin","Cindex","DB",
-                       "Silhouette", "Duda", "Pseudot2", "Beale", "Ratkowsky", "Ball", "Ptbiserial", "Gap", "Frey", "McClain","Gamma", "Gplus", "Tau", "Dunn", 
-                       "Hubert", "SDindex", "Dindex", "SDbw")   
+  # Creates the matrix "res" to store the results with:
+  # (max_nc-min_nc)+1 rows to store the value of each possible k
+  # 30 columns to store the value of each index
+  # The cell ij contains the value of the clustering with k = i for the 
+  # index measure j
+  res <- array(0, c(max_nc-min_nc+1, 30))
+  x_axis <- min_nc:max_nc
+  resCritical <- array(0, c(max_nc-min_nc+1, 4))
+  rownames(resCritical) <- min_nc:max_nc
+  colnames(resCritical) <- c("CritValue_Duda", 
+                             "CritValue_PseudoT2", 
+                             "Fvalue_Beale", 
+                             "CritValue_Gap")
+  rownames(res) <- min_nc:max_nc
+  colnames(res) <- c("KL","CH","Hartigan","CCC","Scott","Marriot", "TrCovW", "TraceW","Friedman","Rubin","Cindex","DB",
+                     "Silhouette", "Duda", "Pseudot2", "Beale", "Ratkowsky", "Ball", "Ptbiserial", "Gap", "Frey", "McClain","Gamma", "Gplus", "Tau", "Dunn", 
+                     "Hubert", "SDindex", "Dindex", "SDbw")   
     
     if (is.na(method))
 	     stop("invalid clustering method")
@@ -237,44 +254,36 @@ if(!is.null(diss))
         hc<-hclust(md,method = "single")		
 	  }
     if (method == 3)
-     {
-        hc<-hclust(md,method = "complete")		
-     }
-	   
+    {
+       hc<-hclust(md,method = "complete")		
+    }
     if (method == 4) 
     {
         hc<-hclust(md,method = "average")
     }
-	  
     if (method == 5) 
     {
         hc<-hclust(md,method = "mcquitty")
-		
    	}
     if (method == 6) 
     {
         hc<-hclust(md,method = "median")
-			
 	  }
     if (method == 7) 
     {
         hc<-hclust(md,method = "centroid")
-		 
 	  }
     if (method == 9) 
     {
-      hc<-hclust(md,method = "ward.D")
-  
+        hc<-hclust(md,method = "ward.D")
     }
+    # method == 8 is kmeans ..... why is it not here?
 
-   
-  
-
-#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
-#                                                                                                                      #
-#                                              Indices                                                                 #
-#                                                                                                                      #
-#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
+#                                                                              #
+#                                Indices                                       #
+#                                                                              #
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&#
     
 
 
@@ -1445,66 +1454,74 @@ Indice.Gap <- function (x, clall, reference.distribution = "unif", B = 10,
 
 ################
 
+    
+# At this point, hc contains the dedrogram if the method given as argument
+# was not kmeans.
 
  for (nc in min_nc:max_nc)
  {  
       
-	   if (any(method == 1) || (method == 2) || (method == 3) || (method == 4) || 
-		  (method == 5) || (method == 6) || (method == 7)||(method == 9)) 
-      {
-	      cl1 <- cutree(hc, k=nc)
-	      cl2 <- cutree(hc, k=nc+1)
-        clall <- cbind(cl1, cl2)
-        clmax <- cutree(hc, k=max_nc) 
-      
-           
-	      if (nc >= 2)
-		    {
-		      cl0 <- cutree(hc, k=nc-1)
-          clall1 <- cbind(cl0, cl1, cl2)
-	      }
-	      if (nc == 1)
-		    {
-		      cl0 <-rep(NA,nn)
-		      clall1 <- cbind(cl0, cl1, cl2)
-		    }
-	    }
-	   
-  	if (method == 8) 
-    {
-      set.seed(1)
-		  cl2 <- kmeans(jeu,nc+1)$cluster
-      set.seed(1)
-		  clmax <- kmeans(jeu,max_nc)$cluster
-      if (nc > 2)
-		  {
-        set.seed(1)
-		    cl1 <- kmeans(jeu,nc)$cluster
-		    clall <- cbind(cl1, cl2)
-        set.seed(1)
-		    cl0 <- kmeans(jeu,nc-1)$cluster
-		    clall1 <- cbind(cl0, cl1, cl2)
-		  }
-	    if (nc == 2)
-		  {
-        set.seed(1)
-	      cl1 <- kmeans(jeu,nc)$cluster
-		    clall <- cbind(cl1, cl2)
-		    cl0 <- rep(1,nn)
-		    clall1 <- cbind(cl0, cl1, cl2)
-	 	   }
-	    if (nc == 1)
-		  {
-	      stop("Number of clusters must be higher than 2")
-  	  }
-
+  # What is that any doing there?
+	if (any(method == 1) || (method == 2) || (method == 3) || (method == 4) || 
+	 (method == 5) || (method == 6) || (method == 7)||(method == 9)) 
+  {
+	  cl1 <- cutree(hc, k=nc)
+	  cl2 <- cutree(hc, k=nc+1)
+    clall <- cbind(cl1, cl2)
+    clmax <- cutree(hc, k=max_nc) 
+  
+	  if (nc >= 2)
+	  {
+	    cl0 <- cutree(hc, k=nc-1)
+      clall1 <- cbind(cl0, cl1, cl2)
+	  }
+	  if (nc == 1)
+	  {
+	    cl0 <-rep(NA,nn)
+	    clall1 <- cbind(cl0, cl1, cl2)
 	 }
+  }
+	   
+  # The selected method is not hierarchical, it is kmeans
+  if (method == 8) 
+  {
+    set.seed(1)
+	  cl2 <- kmeans(jeu,nc+1)$cluster # why + 1?
+    set.seed(1)
+	  clmax <- kmeans(jeu,max_nc)$cluster # pq hace esto en cada iter?
+    if (nc > 2)
+	  {
+      set.seed(1)
+	    cl1 <- kmeans(jeu,nc)$cluster
+	    clall <- cbind(cl1, cl2)
+      set.seed(1)
+	    cl0 <- kmeans(jeu,nc-1)$cluster
+	    clall1 <- cbind(cl0, cl1, cl2)
+	  }
+	  if (nc == 2)
+	  {
+      set.seed(1)
+	    cl1 <- kmeans(jeu,nc)$cluster
+	    clall <- cbind(cl1, cl2)
+	    cl0 <- rep(1,nn)
+	    clall1 <- cbind(cl0, cl1, cl2)
+	  }
+	  if (nc == 1)
+	  {
+	    stop("Number of clusters must be higher than 2")
+	  }
+	  print(paste("Noelia ----- nc = ", nc, "clall:"))
+	  print(head(clall1)) 
+	  print(paste("Noelia ----- nc = ", nc, "clall1:"))
+	  print(head(clall)) 
+	}
 
-	j <- table(cl1)  # table uses the cross-classifying factors to build a contingency table of the counts at each combination of factor levels.
+  # table uses the cross-classifying factors to build a contingency table of 
+  # the counts at each combination of factor levels.
+	j <- table(cl1)  
 	s <- sum(j==1)    
 	j2 <- table(cl2)
 	s2 <- sum(j2==1)
- 
  
   ########### Indices.Traces-hartigan - 3e colonne de res ############ 
  	if (any(indice == 3) || (indice == 31) || (indice == 32))
@@ -1774,9 +1791,9 @@ Indice.Gap <- function (x, clall, reference.distribution = "unif", B = 10,
 	}
 }
 
-#########################################################################################################
-#######################                      Best Number of Clusters                  ###################
-#########################################################################################################
+################################################################################
+###########              Best Number of Clusters                  ##############
+################################################################################
 
 
 
